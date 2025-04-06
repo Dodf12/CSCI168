@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<!-- The plan
+Make a form, which gets the 6 inputs. Once the submit button is clicked,
+use the javascript to calculate the dot product 
+-->
+
+<input>
+  <h1>Dot Product Calculator!</h1>
+
+  <h3>Enter the components of the first vector, u</h3>
+  <label>
+    u1
+    <input id="u1" type="number">
+  </label>
+
+  <br>
+
+  <label>
+    u2
+    <input id="u2" type="number">
+  </label>
+
+  <br>
+
+  <label>
+    u3
+    <input id="u3" type="number">
+  </label>
+
+  <h3>Now enter the components of the second vector, v</h3>
+  <label>
+    v1
+    <input id="v1" type="number">
+  </label>
+
+  <br>
+
+  <label>
+    v2
+    <input id="v2" type="number">
+  </label>
+
+  <br>
+
+  <label>
+    v3
+    <input id="v3" type="number">
+  </label>
+
+  <br>
+
+  <input type="submit" onclick="calculateDotProduct()">
+
+  <br>
+  <label> Dot Product Result</label>
+  <input readonly id = "result"> </input>
+
+
+  <script>
+    function calculateDotProduct()
+    {
+        let dotProd = parseInt(document.getElementById("u1").value) * parseInt(document.getElementById("v1").value) + 
+        parseInt(document.getElementById("u2").value) * parseInt(document.getElementById("v2").value) +
+        parseInt(document.getElementById("u3").value) * parseInt(document.getElementById("v3").value);
+        
+        let result = document.getElementById("result"); // get the result input box
+        result.value = dotProd;
+    };
+  </script>
+
+
+<h1>Cross Calculator!</h1>
+
+<h3>Enter the components of the first vector, w</h3>
+<label>
+  w1
+  <input id="w1" type="number">
+</label>
+
+<br>
+
+<label>
+  w2
+  <input id="w2" type="number">
+</label>
+
+<br>
+
+<label>
+  w3
+  <input id="w3" type="number">
+</label>
+
+<h3>Now enter the components of the second vector, v</h3>
+<label>
+  x1
+  <input id="x1" type="number">
+</label>
+
+<br>
+
+<label>
+  x2
+  <input id="x2" type="number">
+</label>
+
+<br>
+
+<label>
+  x3
+  <input id="x3" type="number">
+</label>
+
+<br>
+
+<input type="submit" onclick="calculateCrossProd()">
+
+<br>
+
+<label> i</label>
+<input readonly id = "result_i"> </input>
+
+<br>
+
+<label> j</label>
+<input readonly id = "result_j"> </input>
+
+<br>
+
+<label> k</label>
+<input readonly id = "result_k"> </input>
+
+<button onclick="calculateCrossProd()"></button>
+
+
+<script>
+  function calculateCrossProd()
+  {
+    let iVal = (parseInt(document.getElementById("w2").value)*
+    parseInt(document.getElementById("x3").value) - ( parseInt(document.getElementById("w3").value) * parseInt(document.getElementById("x2").value) ) );
+
+    let jVal = (parseInt(document.getElementById("w1").value)*
+    parseInt(document.getElementById("x3").value) - ( parseInt(document.getElementById("w3").value) * parseInt(document.getElementById("x1").value) ) );
+
+    let kVal =  (parseInt(document.getElementById("w1").value)*
+    parseInt(document.getElementById("x2").value) - ( parseInt(document.getElementById("w2").value) * parseInt(document.getElementById("x1").value) ) );
+    
+        
+    let result_i = document.getElementById("result_i"); // get the result input box
+    result_i.value = iVal;
+
+    let result_j = document.getElementById("result_j"); // get the result input box
+        result_j.value = jVal;
+
+    let result_k = document.getElementById("result_k");
+    result_k.value = kVal;
+
+  }
+
+
+
+
+</script>
+
+</form>
