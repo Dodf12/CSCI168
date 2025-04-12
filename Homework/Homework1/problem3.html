@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<canvas id="myCanvas" width="500" height="500" style="border:1px solid black;">
+</canvas>
+
+<script>
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+
+let angle = 0; 
+let rotating = false;
+let interval;
+
+function drawRotatingSymbol() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.save();
+  ctx.translate(250, 250); 
+  ctx.rotate(angle);
+  ctx.translate(-250, -250);
+
+
+  ctx.beginPath();
+  ctx.arc(250, 250, 220, 0, 2 * Math.PI);
+  ctx.fillStyle = "black";
+  ctx.fill();
+  ctx.stroke();
+
+  // Gray border
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "gray";
+  ctx.stroke();
+
+  // Inner white circle
+  ctx.beginPath();
+  ctx.arc(250, 250, 150, 0, 2 * Math.PI);
+  ctx.fillStyle = "white";
+  ctx.fill();
+  ctx.stroke();
+
+  // Blue quarter-circle (bottom-right)
+  ctx.beginPath();
+  ctx.moveTo(250, 360);
+  ctx.lineTo(250, 250);
+  ctx.lineTo(360, 250);
+  ctx.arc(250, 250, 145, 0, 0.5 * Math.PI);
+  ctx.fillStyle = "#2e81a7";
+  ctx.fill();
+
+  // Blue quarter-circle (top-left)
+  ctx.beginPath();
+  ctx.moveTo(250, 150);
+  ctx.lineTo(250, 250);
+  ctx.lineTo(150, 250);
+  ctx.arc(250, 250, 145, Math.PI, Math.PI + 0.5 * Math.PI);
+  ctx.fillStyle = "#2e81a7";
+  ctx.fill();
+
+  ctx.save();
+  ctx.translate(140, 127);
+  ctx.rotate(-(Math.PI / 180) * 35); 
+  ctx.font = "50px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText("B", 0, 0); 
+  ctx.restore();
+
+  ctx.font = "50px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText("M", 225, 90);
+
+  ctx.font = "50px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText("W", 335, 120);
+
+  ctx.restore();
+}
+
+document.addEventListener("keydown", (e) => {
+
+
+    if (!rotating) {
+      rotating = true;
+      interval = setInterval(() => {
+        angle += Math.PI / 180; 
+        drawRotatingSymbol();
+      }, 16); 
+    } else {
+      rotating = false;
+      clearInterval(interval);
+    }
+});
+
+ctx.font = "20px Arial";
+drawRotatingSymbol();
+</script>

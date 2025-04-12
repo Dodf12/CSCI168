@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script>
+      var c = document.getElementById("canvas");
+      var ctx = c.getContext("2d");
+
+      ctx.translate(150, 150);
+      ctx.beginPath();
+      ctx.arc(0, 0, 100, 0, 2 * Math.PI );
+      ctx.stroke();
+
+      <!-- First rotate the number, then translate. The rotate it back-->
+      ctx.rotate(Math.PI / 12.0);
+      ctx.translate(0,-90);
+      ctx.rotate(-Math.PI / 12.0);
+      ctx.fillText(1,0,0);
+    </script>
+  </body>
+</html>

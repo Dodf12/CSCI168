@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<svg width="1000" height="1000">
+  <g id="rotatingGroup">
+    <circle r="195" cx="200" cy="200" stroke="gray" stroke-width="10" />
+    <circle id="innerCricle" r="130" cx="200" cy="200"fill="#3283ac" stroke="gray" stroke-width="7" />
+    
+    <path d="M 200 70 l 0 130 l 130 0" stroke="white" fill="white" />
+    <path d="M 200 330 l 0 -130 l -130 0" stroke="white" fill="white" />
+  
+    <path id = "inner_path" d="M 60 200 A 100 100 0 0 1 340 200" fill="none"/>
+  
+  
+    <path id ="white_part_1" d="M 195 70 A 130 130 0 0 1 330 200 L 200 200 L 200 70" fill="white" stroke="black"/>
+    <path id ="white_part_2" d="M 200 330 A 130 130 1 0 1 70 200 L 200 200 L 200 330" fill="white" stroke="black"/>
+    <text style="fill:rgb(254, 254, 254); font-weight: 900; font-size:25px;">
+      <textPath font-weight="bolder" href="#inner_path" text-length="100%" startOffset="15%" font-size=50px  letter-spacing="35"> B M W</textPath>
+  
+    </text>
+  </g>
+</svg>
+
+<button onclick="startRotation()">Start Rotation</button>
+
+<script>
+  let angle = 0;
+  let rotating = false;
+  let interval;
+
+  const group = document.getElementById("rotatingGroup");
+
+  document.addEventListener("keydown", (event) => {
+    if (event.code === "Space" || event.key.toLowerCase() === "r") {
+      event.preventDefault();
+
+      if (!rotating) {  
+        rotating = true;
+        interval = setInterval(() => {
+          angle = (angle + 1) % 360;
+          group.setAttribute("transform", `rotate(${angle} 200 200)`);
+        }, 16);
+      } else {
+        rotating = false;
+        clearInterval(interval);
+      }
+    }
+  });
+</script>
+
+<!--Must learn the paramters of aarcwat-->
+
+<!--
+The way arc works is that it takes a starting point of the arc
+(on the cricle), and the ending point, which is also on the circle/eclipse
+The other three are for flipping and stuff. 
+It then only takes that section of the stuff above teh arc,
+and the below the circle/eclipse is the other part.
+
+-->
