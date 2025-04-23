@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <input readonly id="numdisp" value="0" onkeydown="stopper()"></input>
+    <script>
+      let timer = setInterval(update, 1000);
+      function update() {
+        let label = document.getElementById("numdisp");
+        label.value = (parseInt(label.value) + 1) % 10;
+      }
+
+      function stopper(){
+        clearInterval(timer);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<body>
+<p id="output" style="border:1px solid"
+>
+0</p>
+<script>
+let timerID = setInterval(update, 1000);
+let digit = 0;
+output.addEventListener("mousedown", function (event) {
+ clearInterval(timerID);
+});
+window.addEventListener("keydown", function (event) {
+ clearInterval(timerID);
+});
+function update() {
+ digit = (digit + 1) % 10;
+ output.innerHTML = digit; }
+ 
+</script>
+</body>
+</html>

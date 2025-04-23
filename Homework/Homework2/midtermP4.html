@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body onmousedown="displayer(event)" onmouseup="stopper(event)">
+
+
+<input readonly id="numdisp" value="0"> 
+</input>
+
+<script>
+    var rolling = false;
+    var num = 0;
+    var interval;
+
+
+    function displayer(event) {
+        if (!rolling) {
+            rolling = true;
+            interval = setInterval(counter, 100);
+        }
+    }
+
+    function counter() {
+       let label = document.getElementById("numdisp");
+       label.value = num;
+       num = (num + 1) % 10;
+
+    }
+
+    function stopper(event) {
+        rolling = false;
+        clearInterval(interval);    
+        num = 0;
+        document.getElementById("numdisp").value = num;
+    }
+</script>
+
+</body>
+</html>
