@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="myCanvas" width="800" height="600" style="border:1px solid black;">
+</canvas>
+<script>
+  
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.addEventListener("click", handleClick);
+
+  let x = 0;
+  let y = 0;
+
+  // Create a 2D array to represent the map
+  const height = 6;
+  const length = 8;
+  const map = [];
+  const colorMap = [];
+
+  for (let i = 0; i < length; i++) {
+    map[i] = [];
+    colorMap[i] = [];
+    for (let j = 0; j < height; j++) {
+      map[i][j] = 0; 
+      colorMap[i][j] = "empty"; 
+    }
+  }
+
+  // Variables for moves
+  let possibleMoves = [];
+  let squareSelected = false;
+
+  function handleClick(event) {
+    const rect = canvas.getBoundingClientRect();
+
+    // Calculate the clicked cell
+    const clickedX = Math.floor((event.clientX - rect.left) / 100);
+    const clickedY = Math.floor((event.clientY - rect.top) / 100);
+
+    console.log("Clicked coordinates:", clickedX, clickedY);
+
+    // Check if the clicked cell is one of the possible moves
+    let isPossibleMove = false;
+    for (const [moveX, moveY] of possibleMoves) {
+      if (moveX === clickedX && moveY === clickedY) {
+        isPossibleMove = true;
+        break;
+      }
+    }
+
+    if (isPossibleMove) {
+      console.log("Clicked on a black circle. Handling jump and land...");
+      handleJumpAndLand(x, y, clickedX, clickedY, (x + clickedX) / 2, (y + clickedY) / 2);
+    } else {
+      console.log("Clicked on a new square. Highlighting possible moves...");
+      x = clickedX;
+      y = clickedY;
+      highlightBlack();
+    }
+  }
+
+  function highlightBlack() {
+    squareSelected = true;
+
+    console.log("Highlighting possible moves for:", x, y);
+
+    findPossibleMoves(x, y);
+
+    ctx.fillStyle = "black";
+    for (const [moveRow, moveCol] of possibleMoves) {
+      const x1 = moveRow;
+      const y1 = moveCol;
+      console.log("The black circle goes here:", x1, y1);
+      ctx.beginPath();
+      ctx.arc((x1 * 100) + 50, (y1 * 100) + 50, 10, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+  }
+
+  function findPossibleMoves(x_c, y_c) {
+    possibleMoves = [];
+    if (x_c >= 0 && y_c - 2 >= 0) {
+      if (gameRule(x_c, y_c, x_c, y_c - 2, x_c, y_c - 1)) {
+        possibleMoves.push([x_c, y_c - 2]);
+      }
+    }
+    if (x_c - 2 >= 0 && y_c - 2 >= 0) {
+      if (gameRule(x_c, y_c, x_c - 2, y_c - 2, x_c - 1, y_c - 1)) {
+        possibleMoves.push([x_c - 2, y_c - 2]);
+      }
+    }
+    if (x_c - 2 >= 0 && y_c >= 0) {
+      if (gameRule(x_c, y_c, x_c - 2, y_c, x_c - 1, y_c)) {
+        possibleMoves.push([x_c - 2, y_c]);
+      }
+    }
+    if (x_c >= 0 && y_c + 2 < height) {
+      if (gameRule(x_c, y_c, x_c, y_c + 2, x_c, y_c + 1)) {
+        possibleMoves.push([x_c, y_c + 2]);
+      }
+    }
+    if (x_c + 2 < length && y_c + 2 < height) {
+      if (gameRule(x_c, y_c, x_c + 2, y_c + 2, x_c + 1, y_c + 1)) {
+        possibleMoves.push([x_c + 2, y_c + 2]);
+      }
+    }
+    if (x_c - 2 >= 0 && y_c + 2 < height) {
+      if (gameRule(x_c, y_c, x_c - 2, y_c + 2, x_c - 1, y_c + 1)) {
+        possibleMoves.push([x_c - 2, y_c + 2]);
+      }
+    }
+    if (x_c + 2 < length && y_c >= 0) {
+      if (gameRule(x_c, y_c, x_c + 2, y_c, x_c + 1, y_c)) {
+        possibleMoves.push([x_c + 2, y_c]);
+      }
+    }
+    if (x_c + 2 < length && y_c - 2 >= 0) {
+      if (gameRule(x_c, y_c, x_c + 2, y_c - 2, x_c + 1, y_c - 1)) {
+        possibleMoves.push([x_c + 2, y_c - 2]);
+      }
+    }
+  }
+
+  function gameRule(xCord, yCord, x_shift, y_shift, x_1, y_1) {
+    if (
+      xCord >= 0 && xCord < length &&
+      yCord >= 0 && yCord < height &&
+      x_shift >= 0 && x_shift < length &&
+      y_shift >= 0 && y_shift < height &&
+      x_1 >= 0 && x_1 < length &&
+      y_1 >= 0 && y_1 < height
+    ) {
+      const currentTile = colorMap[xCord][yCord];
+      const middleTile = colorMap[x_1][y_1];
+      const targetTile = colorMap[x_shift][y_shift];
+
+      // Jumping Rules
+      if (targetTile === "empty") {
+        if (isPrimary(currentTile)) {
+          if (isPrimary(middleTile)) {
+            return true;
+          } else if (isSecondary(middleTile) && containsColor(middleTile, currentTile)) {
+            return true;
+          } else if (isTertiary(middleTile)) {
+            return true;
+          }
+        } else if (isSecondary(currentTile)) {
+          if (isSecondary(middleTile) && currentTile === middleTile) {
+            return true;
+          } else if (isTertiary(middleTile)) {
+            return true;
+          }
+        } else if (isTertiary(currentTile)) {
+          if (isTertiary(middleTile)) {
+            return true;
+          }
+        }
+      }
+
+      // Landing Rules
+      if (isPrimary(currentTile)) {
+        if (targetTile === "empty" || isPrimary(targetTile) || (isSecondary(targetTile) && !containsColor(targetTile, currentTile))) {
+          return true;
+        }
+      } else if (isSecondary(currentTile)) {
+        if (targetTile === "empty" || (isPrimary(targetTile) && !containsColor(currentTile, targetTile)) || currentTile === targetTile) {
+          return true;
+        }
+      } else if (isTertiary(currentTile)) {
+        if (targetTile === "empty" || isTertiary(targetTile)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function isPrimary(tile) {
+    return ["blue", "yellow", "red"].includes(tile);
+  }
+
+  function isSecondary(tile) {
+    return ["green", "violet", "orange"].includes(tile);
+  }
+
+  function isTertiary(tile) {
+    return tile === "gray";
+  }
+
+  function containsColor(tile, color) {
+    const secondaryColors = {
+      green: ["blue", "yellow"],
+      violet: ["blue", "red"],
+      orange: ["yellow", "red"],
+      gray: ["blue", "yellow", "red"], // Tertiary contains all primaries
+    };
+    return secondaryColors[tile]?.includes(color) || false;
+  }
+
+  function combineColors(color1, color2) {
+    const combinations = {
+      blue: { yellow: "green", red: "violet" },
+      yellow: { blue: "green", red: "orange" },
+      red: { blue: "violet", yellow: "orange" },
+    };
+    return combinations[color1]?.[color2] || combinations[color2]?.[color1] || "gray";
+  }
+
+  function subtractColor(tile, color) {
+    const secondaryColors = {
+      green: { blue: "yellow", yellow: "blue" },
+      violet: { blue: "red", red: "blue" },
+      orange: { yellow: "red", red: "yellow" },
+      gray: { blue: "orange", yellow: "violet", red: "green" },
+    };
+    return secondaryColors[tile]?.[color] || "empty";
+  }
+
+  function handleJumpAndLand(xCord, yCord, x_shift, y_shift, x_1, y_1) {
+    const currentTile = colorMap[xCord][yCord];
+    const middleTile = colorMap[x_1][y_1];
+    const targetTile = colorMap[x_shift][y_shift];
+
+    // Handle Jumping
+    if (targetTile === "empty") {
+      if (isPrimary(currentTile)) {
+        if (isPrimary(middleTile)) {
+          colorMap[x_1][y_1] = "empty";
+        } else if (isSecondary(middleTile)) {
+          colorMap[x_1][y_1] = subtractColor(middleTile, currentTile);
+        } else if (isTertiary(middleTile)) {
+          colorMap[x_1][y_1] = subtractColor(middleTile, currentTile);
+        }
+      } else if (isSecondary(currentTile)) {
+        if (isSecondary(middleTile) && currentTile === middleTile) {
+          colorMap[x_1][y_1] = "empty";
+        } else if (isTertiary(middleTile)) {
+          colorMap[x_1][y_1] = subtractColor(middleTile, currentTile);
+        }
+      } else if (isTertiary(currentTile)) {
+        if (isTertiary(middleTile)) {
+          colorMap[x_1][y_1] = "empty";
+        }
+      }
+    }
+
+    // Handle Landing
+    if (isPrimary(currentTile)) {
+      if (targetTile === "empty") {
+        colorMap[x_shift][y_shift] = currentTile;
+      } else if (isPrimary(targetTile)) {
+        if (currentTile === targetTile) {
+          colorMap[x_shift][y_shift] = currentTile;
+        } else {
+          colorMap[x_shift][y_shift] = combineColors(currentTile, targetTile);
+        }
+      } else if (isSecondary(targetTile) && !containsColor(targetTile, currentTile)) {
+        colorMap[x_shift][y_shift] = combineColors(currentTile, targetTile);
+      }
+    } else if (isSecondary(currentTile)) {
+      if (targetTile === "empty") {
+        colorMap[x_shift][y_shift] = currentTile;
+      } else if (isPrimary(targetTile) && !containsColor(currentTile, targetTile)) {
+        colorMap[x_shift][y_shift] = "gray";
+      } else if (currentTile === targetTile) {
+        colorMap[x_shift][y_shift] = currentTile;
+      }
+    } else if (isTertiary(currentTile)) {
+      if (targetTile === "empty") {
+        colorMap[x_shift][y_shift] = currentTile;
+      } else if (isTertiary(targetTile)) {
+        colorMap[x_shift][y_shift] = "gray";
+      }
+    }
+
+    // Update the map and redraw
+    colorMap[xCord][yCord] = "empty";
+    reDrawMap();
+  }
+
+ 
+  function drawMap() {
+  ctx.rect(0, 0, 800, 600);
+  ctx.stroke();
+
+  let primary = ["yellow", "blue", "red"];
+  let secondary = ["green", "violet", "orange"];
+  let tertiary = ["gray"];
+  let counter = 0;
+
+  for (let i = 0; i < 800; i += 100) {
+    for (let j = 0; j < 600; j += 100) {
+      let tempindex;
+      let rowIndex = Math.floor(i / 100);
+      let colIndex = Math.floor(j / 100);
+
+      if (!colorMap[rowIndex]) {
+        colorMap[rowIndex] = [];
+        map[rowIndex] = [];
+      }
+
+      if (counter % 4 == 0) {
+        tempindex = Math.floor(Math.random() * secondary.length);
+        colorMap[rowIndex][colIndex] = secondary[tempindex];
+        map[rowIndex][colIndex] = "square"; // Store design type
+        ctx.fillStyle = secondary[tempindex];
+      } else if (counter % 5 == 0) {
+        tempindex = 0; // Tertiary tile
+        colorMap[rowIndex][colIndex] = tertiary[tempindex];
+        map[rowIndex][colIndex] = "combined"; // Store design type
+        ctx.fillStyle = tertiary[tempindex];
+      } else {
+        tempindex = Math.floor(Math.random() * primary.length);
+        colorMap[rowIndex][colIndex] = primary[tempindex];
+        map[rowIndex][colIndex] = "circle"; // Store design type
+        ctx.fillStyle = primary[tempindex];
+      }
+
+      // Draw the tile background
+      ctx.strokeStyle = "black";
+      ctx.strokeRect(i, j, 100, 100);
+      ctx.fillRect(i, j, 100, 100);
+
+      // Add textures based on the design type
+      const designType = map[rowIndex][colIndex];
+      if (designType === "circle") {
+        drawCircleTexture(i, j);
+      } else if (designType === "square") {
+        drawSquareTexture(i, j);
+      } else if (designType === "combined") {
+        drawCombinedTexture(i, j);
+      }
+
+      counter++;
+    }
+  }
+}
+
+// Function to draw a circle texture
+function drawCircleTexture(x, y) {
+  ctx.beginPath();
+  ctx.arc(x + 50, y + 50, 30, 0, 2 * Math.PI); // Outer circle
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(x + 50, y + 50, 15, 0, 2 * Math.PI); // Inner circle
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+// Function to draw a square texture
+function drawSquareTexture(x, y) {
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(x + 35, y + 35, 30, 30); // Outer square
+
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x + 40, y + 40, 20, 20); // Inner square
+}
+
+// Function to draw a combined texture (circle + square)
+function drawCombinedTexture(x, y) {
+  drawCircleTexture(x, y); // Draw the circle
+  drawSquareTexture(x, y); // Draw the square
+}
+
+function reDrawMap() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = 0; i < length; i++) {
+    for (let j = 0; j < height; j++) {
+      const tileColor = colorMap[i][j];
+      const designType = map[i][j]; // Retrieve the stored design type
+
+      ctx.strokeStyle = "black";
+      ctx.strokeRect(i * 100, j * 100, 100, 100);
+
+      if (tileColor !== "empty") {
+        ctx.fillStyle = tileColor;
+        ctx.fillRect(i * 100, j * 100, 100, 100);
+
+        // Redraw the correct design
+        if (designType === "circle") {
+          drawCircleTexture(i * 100, j * 100);
+        } else if (designType === "square") {
+          drawSquareTexture(i * 100, j * 100);
+        } else if (designType === "combined") {
+          drawCombinedTexture(i * 100, j * 100);
+        }
+      }
+    }
+  }
+}
+
+  window.addEventListener("load", drawMap);
+
+</script>
+</body>
+</html>
