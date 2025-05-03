@@ -9,23 +9,23 @@
   <button onclick="reset()"> reset</button>
 <body>
 <script>
-  let verticies = []; // Initialize the verticies array
+  let verticies = []; 
   let crossProds = [];
 
   let svg = document.getElementById("mySvg");
-  svg.addEventListener("click", addVerticy); // Pass the function reference
+  svg.addEventListener("click", addVerticy);
 
   function reset(){
     verticies = []; // Reset the verticies array
     let polygon = document.getElementById("polygon");
-    polygon.setAttribute("points", ""); // Clear the points attribute
-    polygon.setAttribute("fill", "none"); // Reset the fill color
-    polygon.setAttribute("stroke", "black"); // Reset the stroke color
+    polygon.setAttribute("points", ""); 
+    polygon.setAttribute("fill", "none"); r
+    polygon.setAttribute("stroke", "black"); 
   }
 
   function addVerticy(event) {
-    let polygon = document.getElementById("polygon"); // Get the polygon element
-    let svg = document.getElementById("mySvg"); // Get the SVG element
+    let polygon = document.getElementById("polygon"); 
+    let svg = document.getElementById("mySvg"); 
 
     // Get the bounding rectangle of the SVG element
     let rect = svg.getBoundingClientRect();
@@ -34,14 +34,14 @@
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-    verticies.push([x, y]); // Add the new vertex to the array
+    verticies.push([x, y]); 
 
     // Get current points
     let points = polygon.getAttribute("points");
 
     // Add a new point
     points += ` ${x},${y}`;
-    polygon.setAttribute("points", points.trim()); // Update the points attribute
+    polygon.setAttribute("points", points.trim());
 
     // Update the polygon fill color based on concavity
     updateColor();
@@ -54,15 +54,15 @@
       let [x2, y2] = verticies[(i + 1) % verticies.length];
       sum += (x2 - x1) * (y2 + y1);
     }
-    return sum > 0; // Clockwise if the sum is positive
+    return sum > 0; 
   }
 
   function isConvex() {
-    crossProds = []; // Reset the cross products array
+    crossProds = [];
 
     if (verticies.length < 3) {
       console.log("Not enough vertices to determine convexity.");
-      return true; // A polygon with fewer than 3 vertices cannot be concave
+      return true; 
     }
 
     // Ensure vertices are ordered clockwise
@@ -72,8 +72,8 @@
 
     for (let i = 0; i < verticies.length; i++) {
       let [x1, y1] = verticies[i];
-      let [x2, y2] = verticies[(i - 1 + verticies.length) % verticies.length]; // Wrap around
-      let [x3, y3] = verticies[(i - 2 + verticies.length) % verticies.length]; // Wrap around
+      let [x2, y2] = verticies[(i - 1 + verticies.length) % verticies.length]; 
+      let [x3, y3] = verticies[(i - 2 + verticies.length) % verticies.length]; 
 
       // Calculate dx1, dy1, dx2, dy2
       let dx1 = x2 - x1;
@@ -96,11 +96,11 @@
 
     console.log("Has positive:", hasPositive, "Has negative:", hasNegative);
 
-    return !(hasPositive && hasNegative); // Convex if no mixed signs
+    return !(hasPositive && hasNegative);
   }
 
   function updateColor() {
-    let polygon = document.getElementById("polygon"); // Get the polygon element
+    let polygon = document.getElementById("polygon"); 
 
     console.log("Checking convexity...");
     if (isConvex()) {
@@ -112,5 +112,10 @@
     }
   }
 </script>
+
+<h2>
+  To make the code, first select a point on the canvas, then select another point in another place.
+  The line will show up
+</h2>
 </body>
 </html>

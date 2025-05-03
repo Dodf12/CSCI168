@@ -21,13 +21,13 @@ function drawClock() {
   ctx.clearRect(-radius - 100, -radius, canvas.width, canvas.height);
 
   // Fill the entire canvas with green
-  ctx.fillStyle = "#51602a"; // Set the background color to green
+  ctx.fillStyle = "#51602a"; 
   ctx.fillRect(-radius, -radius, canvas.width, canvas.height);
 
   // Create a circular clipping path
   ctx.beginPath();
-  ctx.arc(0, 0, radius, 0, 2 * Math.PI); // Define a circle
-  ctx.clip(); // Restrict drawing to the circle
+  ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+  ctx.clip(); 
 
   // Draw the clock face, numbers, and hands
   drawFace(ctx, radius);
@@ -126,12 +126,12 @@ function drawTime(ctx, radius) {
     const canvasTexture = new THREE.CanvasTexture(canvas);
 
     const materials = [
-    new THREE.MeshBasicMaterial({ map: canvasTexture, side: THREE.DoubleSide }), // Front face (clock)
-    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.2, depthWrite: false }), // Back face (transparent)
-    new THREE.MeshBasicMaterial({ color: 0x51602a }), // Top face
-    new THREE.MeshBasicMaterial({ color: 0x51602a }), // Bottom face
-    new THREE.MeshBasicMaterial({ color: 0x51602a }), // Left face
-    new THREE.MeshBasicMaterial({ color: 0x51602a }), // Right face
+    new THREE.MeshBasicMaterial({ map: canvasTexture, side: THREE.DoubleSide }), 
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.2}), 
+    new THREE.MeshBasicMaterial({ color: 0x51602a }),
+    new THREE.MeshBasicMaterial({ color: 0x51602a }), 
+    new THREE.MeshBasicMaterial({ color: 0x51602a }),
+    new THREE.MeshBasicMaterial({ color: 0x51602a }), 
     ];
 
     // scene

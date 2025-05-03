@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <body>
+  <h1> Tesserae</h1>
+  <h3> I redid the designs for the squares</h3>
+  <h1> If you cant select a square, it means that you can't fill them out</h1>
 <canvas id="myCanvas" width="800" height="600" style="border:1px solid black;">
 </canvas>
 <script>
@@ -194,7 +197,7 @@
       green: ["blue", "yellow"],
       violet: ["blue", "red"],
       orange: ["yellow", "red"],
-      gray: ["blue", "yellow", "red"], // Tertiary contains all primaries
+      gray: ["blue", "yellow", "red"], 
     };
     return secondaryColors[tile]?.includes(color) || false;
   }
@@ -304,17 +307,17 @@
       if (counter % 4 == 0) {
         tempindex = Math.floor(Math.random() * secondary.length);
         colorMap[rowIndex][colIndex] = secondary[tempindex];
-        map[rowIndex][colIndex] = "square"; // Store design type
+        map[rowIndex][colIndex] = "square"; 
         ctx.fillStyle = secondary[tempindex];
       } else if (counter % 5 == 0) {
-        tempindex = 0; // Tertiary tile
+        tempindex = 0; 
         colorMap[rowIndex][colIndex] = tertiary[tempindex];
-        map[rowIndex][colIndex] = "combined"; // Store design type
+        map[rowIndex][colIndex] = "combined"; 
         ctx.fillStyle = tertiary[tempindex];
       } else {
         tempindex = Math.floor(Math.random() * primary.length);
         colorMap[rowIndex][colIndex] = primary[tempindex];
-        map[rowIndex][colIndex] = "circle"; // Store design type
+        map[rowIndex][colIndex] = "circle"; 
         ctx.fillStyle = primary[tempindex];
       }
 
@@ -341,13 +344,13 @@
 // Function to draw a circle texture
 function drawCircleTexture(x, y) {
   ctx.beginPath();
-  ctx.arc(x + 50, y + 50, 30, 0, 2 * Math.PI); // Outer circle
+  ctx.arc(x + 50, y + 50, 30, 0, 2 * Math.PI); 
   ctx.strokeStyle = "black";
   ctx.lineWidth = 4;
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.arc(x + 50, y + 50, 15, 0, 2 * Math.PI); // Inner circle
+  ctx.arc(x + 50, y + 50, 15, 0, 2 * Math.PI); 
   ctx.strokeStyle = "white";
   ctx.lineWidth = 2;
   ctx.stroke();
@@ -357,17 +360,17 @@ function drawCircleTexture(x, y) {
 function drawSquareTexture(x, y) {
   ctx.strokeStyle = "black";
   ctx.lineWidth = 4;
-  ctx.strokeRect(x + 35, y + 35, 30, 30); // Outer square
+  ctx.strokeRect(x + 35, y + 35, 30, 30);
 
   ctx.strokeStyle = "white";
   ctx.lineWidth = 2;
-  ctx.strokeRect(x + 40, y + 40, 20, 20); // Inner square
+  ctx.strokeRect(x + 40, y + 40, 20, 20);
 }
 
 // Function to draw a combined texture (circle + square)
 function drawCombinedTexture(x, y) {
-  drawCircleTexture(x, y); // Draw the circle
-  drawSquareTexture(x, y); // Draw the square
+  drawCircleTexture(x, y); 
+  drawSquareTexture(x, y);
 }
 
 function reDrawMap() {
@@ -376,7 +379,7 @@ function reDrawMap() {
   for (let i = 0; i < length; i++) {
     for (let j = 0; j < height; j++) {
       const tileColor = colorMap[i][j];
-      const designType = map[i][j]; // Retrieve the stored design type
+      const designType = map[i][j];
 
       ctx.strokeStyle = "black";
       ctx.strokeRect(i * 100, j * 100, 100, 100);
