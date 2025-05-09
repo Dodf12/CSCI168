@@ -120,6 +120,11 @@
           if (currentHeight <= 0) {
             currentHeight = 0;
             currentVelocity = -currentVelocity * 0.85;
+
+            // Play the audio when y is 0
+            if (!sound.isPlaying) {
+              sound.play();
+            }
           }
 
           // Horizontal motion
@@ -127,6 +132,11 @@
           currentXDistance +=
             currentXVelocity * deltaTime +
             0.5 * currentXAcceleration * deltaTime * deltaTime;
+
+          // Stop the audio when x reaches 50
+          if (currentXDistance >= 50 && sound.isPlaying) {
+            sound.stop();
+          }
 
           if (currentXDistance > 80) {
             currentXVelocity = 0;
@@ -149,7 +159,7 @@
 
         const audioLoader = new THREE.AudioLoader();
         audioLoader.load(
-          'https://sfxcontent.s3.amazonaws.com/soundfx/Basketball-BallBounce.mp3',
+          'https://raw.githubusercontent.com/Dodf12/CSCI168/main/Homework/Homework5/Rubber ball bouncing.mp3',
           function (buffer) {
             sound.setBuffer(buffer);
             sound.setLoop(false);
@@ -161,19 +171,17 @@
         document.getElementById('startButton').addEventListener('click', () => {
           if (!animationStarted) {
             animationStarted = true; // Start the animation
-            sound.play(); // Play the audio
             animate(); // Start the animation loop
           }
         });
 
         document.getElementById('restart').addEventListener('click', () => {
           location.reload(); // Reload the page to reset everything
-
         });
       }
 
       window.onload = init;
     </script>
-    <h3>Click reset to reload teh page and click "startanimatinon and audio" to replay animation</h3>
+    <h3>Click reset to reload the page and click "Start Animation and Audio" to replay animation</h3>
   </body>
 </html>
