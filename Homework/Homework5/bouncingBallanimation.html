@@ -21,10 +21,10 @@
 
         // Add a floor
         function addFloor(scene) {
-          const geometry = new THREE.BoxGeometry(200, 10, 200);
+          const geometry = new THREE.BoxGeometry(500, 10, 500);
           const textureLoader = new THREE.TextureLoader();
           const floorTexture = textureLoader.load(
-            'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/precast_stone_paving/precast_stone_paving_diff_4k.jpg'
+            ''
           );
           floorTexture.wrapS = THREE.RepeatWrapping;
           floorTexture.wrapT = THREE.RepeatWrapping;
@@ -58,7 +58,7 @@
           });
 
           const basketball = new THREE.Mesh(g, m);
-          basketball.position.set(0, 3, 0);
+          basketball.position.set(-10, 10, 7);
           basketball.name = 'basketball';
           basketball.castShadow = true;
           scene.add(basketball);
@@ -66,6 +66,25 @@
         addSphere(scene);
 
         sphere = scene.getObjectByName('basketball');
+
+        // Add a wall
+        const textureLoader = new THREE.TextureLoader();
+        const wallTexture = textureLoader.load(
+          'https://as2.ftcdn.net/v2/jpg/04/35/85/01/1000_F_435850140_7h7qQQJAPlhQ05zSNzmbhXT2pWYcfoxc.jpg'
+        );
+        wallTexture.wrapS = THREE.RepeatWrapping;
+        wallTexture.wrapT = THREE.RepeatWrapping;
+
+        const material = new THREE.MeshBasicMaterial({
+          //color: 0xffff00,
+          side: THREE.DoubleSide,
+          map: wallTexture,
+        });
+
+        const geometry = new THREE.PlaneGeometry(400, 400);
+        const plane = new THREE.Mesh(geometry, material);
+        plane.position.set(0, 0, -50); // Adjust position if needed
+        scene.add(plane);
 
         // Add lighting
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -85,16 +104,14 @@
 
         // Camera
         camera = new THREE.PerspectiveCamera(30, 800 / 600, 0.1, 1000);
-        camera.position.set(90, 30, 100);
+        camera.position.set(-20, 20, 110);
         camera.lookAt(scene.position);
 
         // Orbit Controls
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         // Physics
-
-        //I set the accerlation to 21 because the original 9.8 was too slow
-        let acceleration = 21;
+        let acceleration = 9.8;
         let currentVelocity = 0;
         let currentHeight = sphere.position.y;
         let currentXDistance = sphere.position.x;
@@ -134,12 +151,19 @@
             0.5 * currentXAcceleration * deltaTime * deltaTime;
 
           // Stop the audio when x reaches 50
-          if (currentXDistance >= 50 && sound.isPlaying) {
+          if (currentXDistance >= 80 && sound.isPlaying) {
             sound.stop();
           }
 
-          if (currentXDistance > 80) {
-            currentXVelocity = 0;
+          if (currentXDistance > 150) {
+            let acceleration = 9.8;
+            let currentVelocity = 0;
+            let currentHeight = sphere.position.y;
+            let currentXDistance = sphere.position.x;
+            let currentXVelocity = 3;
+            let currentXAcceleration = 2;
+
+            sphere.setPosition(-10, 10, 0); // Reset position
           }
 
           // Update sphere position
@@ -159,7 +183,7 @@
 
         const audioLoader = new THREE.AudioLoader();
         audioLoader.load(
-          'https://raw.githubusercontent.com/Dodf12/CSCI168/main/Homework/Homework5/Rubber ball bouncing.mp3',
+          'https://raw.githubusercontent.com/Dodf12/CSCI168/main/Homework/Homework5/ballBounce.mp3',
           function (buffer) {
             sound.setBuffer(buffer);
             sound.setLoop(false);
