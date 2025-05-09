@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <button id="startButton">Start Animation</button> <!-- Single button for animation -->
+    <button id="startButton">Start Animation and Audio</button> <!-- Single button for both actions -->
     <button id="restart">Reset</button>
     <script src="https://cdn.jsdelivr.net/npm/three/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
     <script>
       // Global Variables
-      let scene, camera, renderer, sphere, bounceSound, animationStarted = false;
+      let scene, camera, renderer, sphere, sound, animationStarted = false;
 
       function init() {
         // Renderer
@@ -58,7 +58,7 @@
           });
 
           const basketball = new THREE.Mesh(g, m);
-          basketball.position.set(0, 5, 0);
+          basketball.position.set(0, 3, 0);
           basketball.name = 'basketball';
           basketball.castShadow = true;
           scene.add(basketball);
@@ -92,10 +92,12 @@
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         // Physics
-        let acceleration = 9.8;
+
+        //I set the accerlation to 21 because the original 9.8 was too slow
+        let acceleration = 21;
         let currentVelocity = 0;
-        let currentHeight = 5; // Initial height of the sphere
-        let currentXDistance = 0; // Initial x position of the sphere
+        let currentHeight = sphere.position.y;
+        let currentXDistance = sphere.position.x;
         let currentXVelocity = 3;
         let currentXAcceleration = 2;
 
@@ -105,7 +107,7 @@
           requestAnimationFrame(animate);
 
           // Time management
-          const deltaTime = 0.016; //Approximate framerate
+          const deltaTime = 0.016;
 
           // Vertical motion
           currentVelocity -= acceleration * deltaTime;
@@ -117,7 +119,7 @@
           // Collision detection with the floor
           if (currentHeight <= 0) {
             currentHeight = 0;
-            currentVelocity = -currentVelocity * 0.85;2
+            currentVelocity = -currentVelocity * 0.85;
           }
 
           // Horizontal motion
@@ -143,23 +145,35 @@
         const listener = new THREE.AudioListener();
         camera.add(listener);
 
+        sound = new THREE.Audio(listener);
 
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load(
+          'https://sfxcontent.s3.amazonaws.com/soundfx/Basketball-BallBounce.mp3',
+          function (buffer) {
+            sound.setBuffer(buffer);
+            sound.setLoop(false);
+            sound.setVolume(0.5);
+          }
+        );
 
-        // Add event listener to the button to start animation
+        // Add event listener to the button to start animation and audio
         document.getElementById('startButton').addEventListener('click', () => {
           if (!animationStarted) {
             animationStarted = true; // Start the animation
+            sound.play(); // Play the audio
             animate(); // Start the animation loop
           }
         });
 
         document.getElementById('restart').addEventListener('click', () => {
           location.reload(); // Reload the page to reset everything
+
         });
       }
 
       window.onload = init;
     </script>
-    <h3>Click reset to reload the page and click "Start Animation" to replay animation</h3>
+    <h3>Click reset to reload teh page and click "startanimatinon and audio" to replay animation</h3>
   </body>
 </html>
