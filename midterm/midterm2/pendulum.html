@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Pendulum Animation</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+      display: block;
+      margin: 20px auto;
+      background: #eef;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas" width="600" height="500"></canvas>
+
+<script>
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  // Center and pendulum settings
+  let length = 200;
+  let dTheta = Math.PI / 2;
+
+  let clockwise = true;
+  
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let lineXCord = 250 + length * Math.sin(dTheta);
+    let lineYCord = 50 + length * Math.cos(dTheta);
+
+    ctx.beginPath();
+    ctx.moveTo(250, 50); // Pivot point
+    ctx.lineTo(lineXCord,lineYCord);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    if (dTheta > Math.PI / 2) {
+      clockwise = false;
+      dTheta = - Math.PI / 2;
+    } 
+    else if (dTheta < -Math.PI / 2) {
+      clockwise = true;
+      dTheta = Math.PI / 2;
+    }
+
+    // Draw the bob
+    if (clockwise) {
+      dTheta += Math.PI / 180;
+    }
+    
+    if (clockwise == false) {2
+      dTheta -= Math.PI / 180;
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw(); // Start animation
+</script>
+
+</body>
+</html>

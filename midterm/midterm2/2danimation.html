@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>2D Canvas Animation</title>
+  <style>
+    canvas {
+      border: 1px solid #000;
+      display: block;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="700" height="500"></canvas>
+
+<script>
+  const canvas = document.getElementById('myCanvas');
+  const ctx = canvas.getContext('2d');
+
+ window.addEventListener("keydown", moveBar);
+  //Ball Properties
+  let x = 50;
+  let y = 50;
+  let dx = 2; // change in x
+  let dy = 1.5; // change in y
+  let radius = 20;
+
+  //Paddle Properties
+  let paddleWidth = 75;
+  const xPos = 25;
+  let yPos = 250;
+
+  function drawBall(){
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = "blue";
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function drawBar() {
+    ctx.beginPath();
+    ctx.moveTo(xPos, yPos);
+    ctx.lineTo(xPos, yPos  + paddleWidth);
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "red";
+    ctx.stroke();
+    ctx.closePath();
+  }
+
+  function moveBar(event) {
+    if (event.key === "ArrowUp") {
+      yPos -= 30; // Move up
+    } else if (event.key === "ArrowDown") {
+      yPos += 30; // Move down
+    }
+
+    // Prevent the paddle from going out of bounds
+    if (yPos < 0) yPos = 0;
+    if (yPos + paddleWidth > canvas.height) yPos = canvas.height - paddleWidth;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+
+    drawBall(); // Draw the ball
+
+    drawBar();
+    // Update position
+    x += dx * 1.0001;
+    y += dy * 1.011;
+
+    // Bounce off edges
+    if (x + radius > canvas.width || x - radius < 0) dx = -dx;
+    if (y + radius > canvas.height || y - radius < 0) dy = -dy;
+
+    if (x - radius < xPos + 5 && y > yPos && y < yPos + paddleWidth) {
+      dx = -dx; // Bounce off the paddle
+    }
+
+
+    requestAnimationFrame(draw); // Keep animating
+  }
+
+  draw(); // Start the animation
+</script>
+
+</body>
+</html>
