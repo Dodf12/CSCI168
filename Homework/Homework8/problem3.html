@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<body>
+<label>Vertex X Color: <input type="color" id="colorX" value="#ff0000"></label>
+<label>Vertex Y Color: <input type="color" id="colorY" value="#0000ff"></label>
+<label>Vertex Z Color: <input type="color" id="colorZ" value="#008000"></label>
+
+<canvas id="myCanvas" width="500" height="500" style="border:1px solid black;">
+</canvas>
+<script>
+  const canvas = document.getElementById('myCanvas');
+  const ctx = canvas.getContext('2d');
+
+
+  const xC = {x: 25, y: 25};
+  const yC = {x: 25, y: 425};
+  const zC = {x: 425, y: 425};
+
+  const zMinusx = [400, 400];
+  const yMinusx = [yC.x - xC.x, yC.y - xC.y];
+
+  var beta = 0;
+  var gamma = 0;
+  var alpha = 0;
+
+  //Got from online source cuz it wasnt working if I didnt have it
+  function hexToRgb(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
+
+  function drawTriangle(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.strokeStyle = 'black';
+    ctx.moveTo(xC.x, xC.y);
+    ctx.lineTo(yC.x, yC.y);
+    ctx.lineTo(zC.x, zC.y);
+    ctx.closePath();
+    ctx.stroke();
+
+    drawPoint();
+  }
+
+  function findCrossProduct(u,v){
+    return u[0] * v[1] - u[1] * v[0];
+  }
+
+function calculateBarycentric(x, y) {
+  let beta = findCrossProduct(zMinusx, [x - xC.x, y - xC.y]) / findCrossProduct(zMinusx, yMinusx);
+  let gamma = findCrossProduct([x - xC.x, y - xC.y], yMinusx) / findCrossProduct(zMinusx, yMinusx);
+  let alpha = 1 - beta - gamma;
+  return { alpha, beta, gamma };
+}
+
+function drawPoint() {
+const colorX = hexToRgb(document.getElementById('colorX').value);
+  const colorY = hexToRgb(document.getElementById('colorY').value);
+  const colorZ = hexToRgb(document.getElementById('colorZ').value);
+
+  for (let i = 0; i < 500; i++) {
+    for (let j = 0; j < 500; j++) {
+      let { alpha, beta, gamma } = calculateBarycentric(i, j);
+      if (alpha >= 0 && beta >= 0 && gamma >= 0 && alpha <= 1 && beta <= 1 && gamma <= 1) {
+        let r = alpha * colorX.r + beta * colorY.r + gamma * colorZ.r;
+        let g = alpha * colorX.g + beta * colorY.g + gamma * colorZ.g;
+        let b = alpha * colorX.b + beta * colorY.b + gamma * colorZ.b;
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+        ctx.fillRect(i, j, 1, 1);
+      }
+    }
+  }
+}
+document.getElementById('colorX').addEventListener('input', drawTriangle);
+document.getElementById('colorY').addEventListener('input', drawTriangle);
+document.getElementById('colorZ').addEventListener('input', drawTriangle);
+
+drawTriangle();  
+</script>
